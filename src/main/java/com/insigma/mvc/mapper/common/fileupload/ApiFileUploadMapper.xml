@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.insigma.mvc.dao.common.fileupload.ApiFileUploadMapper">
+
+    <!-- 获取文件类型信息 -->
+    <select id="getFileTypeInfo" resultType="SFileType" parameterType="String">
+        SELECT
+            businesstype,
+            typename,
+            filemaxnum,
+            filemaxsize
+        FROM
+          s_filetype a
+        WHERE
+          a.businesstype = #{businesstype}
+    </select>
+
+    <!-- 保存文件上传记录 -->
+    <insert id="saveFileRecord"  parameterType="SFileRecord">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="file_uuid">
+            SELECT sys_guid() FROM dual
+        </selectKey>
+        INSERT INTO
+            s_file_record(file_uuid,file_name,file_length,file_status,file_path,file_addtime,file_type,file_rel_path)
+        VALUES
+            (#{file_uuid},#{file_name},#{file_length},#{file_status},#{file_path},sysdate,#{file_type},#{file_rel_path})
+    </insert>
+
+    <!-- 保存业务记录 -->
+    <insert id="saveBusRecord"  parameterType="SFileRecord">
+        <selectKey resultType="String" order="BEFORE" keyProperty="bus_uuid">
+            SELECT sys_guid() from dual
+        </selectKey>
+        INSERT INTO
+          S_BUS_FILE_RECORD(bus_uuid, file_uuid, file_bus_id, file_bus_type, bus_addtime, file_bus_name, file_bus_description)
+        VALUES
+          (#{bus_uuid}, #{file_uuid}, #{file_bus_id}, #{file_bus_type}, sysdate, #{file_bus_name}, #{file_bus_description})
+    </insert>
+
+    <!-- 更新业务记录 -->
+    <update id="updateBusRecord" parameterType="SFileRecord">
+        UPDATE
+            S_BUS_FILE_RECORD
+        SET
+            file_uuid = #{file_uuid},
+            bus_addtime = sysdate,
+            file_bus_name = #{file_bus_name}
+        WHERE
+            bus_uuid = #{bus_uuid}
+    </update>
+
+    <!-- getFileUploadRecordByFileMd5 -->
+    <select id="getFileUploadRecordByFileMd5" parameterType="String" resultType="SFileRecord">
+        SELECT * FROM s_file_record  WHERE file_md5=#{file_md5}
+    </select>
+
+    <!-- 通过id查询-->
+    <select id="getBusFileRecordByBusId" parameterType="String" resultType="SFileRecord">
+        SELECT
+            a.file_rel_path,
+            b.bus_uuid,
+            a.file_uuid,
+            file_name,
+            file_length,
+            file_status,
+            file_path,
+            file_addtime,
+            file_type,
+            bus_uuid,
+            b.file_bus_id,
+            b.file_bus_type
+        FROM
+            s_file_record a,
+            s_bus_file_record b
+        WHERE
+            a.file_uuid=b.file_uuid AND
+            b.bus_uuid=#{bus_uuid}
+    </select>
+
+    <!-- 通过id查询-->
+    <select id="getBusFileRecordListByBusId" parameterType="String" resultType="SFileRecord">
+        SELECT
+            b.file_bus_id,
+            b.bus_uuid,
+            a.file_uuid,
+            a.file_name,
+            a.file_length,
+            a.file_status,
+            a.file_addtime,
+            a.file_type,
+            a.file_path,
+            a.file_rel_path,
+            (SELECT code_name FROM code_value t WHERE t.code_type='FILE_BUS_TYPE' AND code_value=b.file_bus_type) file_bus_type
+        FROM
+            s_file_record  a, s_bus_file_record b
+        WHERE
+            a.file_uuid=b.file_uuid AND
+            b.file_bus_id=#{file_bus_id}
+        <if test="file_bus_type != null and file_bus_type != null">
+            AND b.file_bus_type =#{file_bus_type}
+        </if>
+        ORDER BY file_addtime DESC
+    </select>
+
+    <!-- 通过bus_uuid删除文件业务记录 -->
+    <delete id="deleteFileByBusUuid" parameterType="String" >
+        DELETE FROM s_bus_file_record t where t.bus_uuid = #{bus_uuid}
+    </delete>
+
+    <!-- 批量删除 -->
+    <delete id="batDeleteData"  parameterType="String" >
+        DELETE FROM s_bus_file_record WHERE bus_uuid IN
+        <foreach item="selectnodes" collection="array" open="(" separator="," close=")">
+            #{selectnodes}
+        </foreach>
+    </delete>
+
+    <!-- 通过文件id数组更新业务id及业务状态为有效状态 -->
+    <update id="batupdateBusIdByBusUuidArray" >
+        UPDATE  s_bus_file_record  t SET t.file_bus_id=#{file_bus_id} WHERE bus_uuid IN
+        <foreach item="bus_uuid" collection="bus_uuids"   index="index" open="(" separator="," close=")">
+            #{bus_uuid}
+        </foreach>
+    </update>
+
+    <!-- 通过file_uuid删除文件记录 -->
+    <delete id="deleteFileByFileUuid" parameterType="String" >
+        DELETE FROM s_file_record t WHERE t.file_uuid=#{file_uuid}
+    </delete>
+
+</mapper>

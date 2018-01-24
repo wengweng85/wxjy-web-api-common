@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.insigma.mvc.dao.sysmanager.login.ApiWebLoginMapper">
+    <select id="getUserAndGroupInfo" parameterType="String" resultType="SUser" >
+     select 
+       a.userid,
+       a.username,
+       a.password,
+       a.username cnname,
+       a.enabled,
+       c.NAME groupname  
+     from s_user a ,s_usergroupref b ,s_group c where 
+     a.userid=b.userid and b.groupid=c.GROUPID
+     and a.username=#{loginname} and password=#{password}
+	</select>
+	
+	<!-- getGroupInfo -->
+	<select id="getGroupAreaInfo" parameterType="String" resultType="SGroup">
+         select groupid,parentid,name,type from s_group  start with groupid=#{groupid}  connect by prior PARENTID = groupid 
+	</select>
+	
+	<!-- 个人用户角色查询  -->
+	<select id="findRolesStr" parameterType="String" resultType="SRole">
+		select b.code from s_user a,s_role b ,s_user_role c where a.username=#{username}  and a.userid=c.userid and b.roleid=c.roleid  and b.code is not null
+	</select>
+	
+	
+	<!-- 个人用户权限查询  -->
+	<select id="findPermissionStr" parameterType="String" resultType="SPermission">
+		 select * from (
+	        select distinct d.url, d.type, nvl(d.iconcss,'fa-file-o') iconcss , d.permissionid,d.parentid, d.name,d.sortnum,d.isblanktarget 
+	       from s_user a,s_role b ,s_user_role c,s_permission d ,s_role_permission e 
+	        where a.username=#{username}
+	        and a.userid=c.userid 
+	        and b.roleid=c.roleid  and b.roleid=e.roleid 
+	        and d.permissionid=e.permissionid  and d.code is not null and d.parentid is not null and d.enabled='1'
+       ) 
+       order by to_number(sortnum)
+	</select>
+	
+	<!-- 保存 -->
+	<insert id="saveLoginHashInfo"  parameterType="SysLoginInf">
+		insert into s_logininf (loginhash,logintime,ip,usergent,sessionid)
+		values (#{loginhash},sysdate,#{ip},#{usergent},#{sessionid})
+	</insert>
+	
+	<!-- 检验登录权限 -->
+	<select id="findLoginInfoByhashcode" parameterType="String" resultType="SysLoginInf">
+		select * from s_logininf where loginhash=#{loginhash} 
+	</select>
+</mapper>

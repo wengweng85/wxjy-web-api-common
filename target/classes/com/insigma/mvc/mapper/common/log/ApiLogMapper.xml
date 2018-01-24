@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.insigma.mvc.dao.common.log.ApiLogMapper">
+    <!-- 保存正常日志 -->
+    <insert id="saveLogInfo" parameterType="SLog">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="logid">
+            SELECT sys_guid() from dual
+        </selectKey>
+        insert into s_log(
+	        logid ,
+	        interfacetype ,
+	        message ,
+	        logtime ,
+	        cost ,
+	        stackmsg ,
+	        exceptiontype ,
+	        usergent ,
+	        ipaddr ,
+	        referer ,
+	        url ,
+	        userid ,
+	        cookie ,
+	        appkey ,
+	        queryparam ,
+	        method ,
+	        success ,
+	        responsemsg,
+	        token
+        )
+        values (
+	        #{logid, jdbcType=VARCHAR} ,
+	        #{interfacetype,jdbcType=VARCHAR} ,
+	        #{message,jdbcType=VARCHAR} ,
+	        sysdate ,
+	        #{cost,jdbcType=VARCHAR} ,
+	        #{stackmsg,jdbcType=CLOB} ,
+	        #{exceptiontype,jdbcType=VARCHAR} ,
+	        #{usergent,jdbcType=VARCHAR} ,
+	        #{ipaddr,jdbcType=VARCHAR} ,
+	        #{referer,jdbcType=VARCHAR} ,
+	        #{url,jdbcType=VARCHAR} ,
+	        #{userid,jdbcType=VARCHAR} ,
+	        #{cookie,jdbcType=VARCHAR} ,
+	        #{appkey,jdbcType=VARCHAR} ,
+	        #{queryparam,jdbcType=CLOB} ,
+	        #{method,jdbcType=VARCHAR} ,
+	        #{success,jdbcType=VARCHAR} ,
+	        #{responsemsg,jdbcType=CLOB},
+	        #{token,jdbcType=VARCHAR}
+        )
+    </insert>
+
+
+    <!-- 保存用户操作日志 -->
+    <insert id="saveUserLog" parameterType="SUserLog">
+		insert into S_USERLOG(
+			logid,
+			optype,
+			logstime,
+			logetime,
+			message,
+			opstatus,
+			opreason,
+			aae011,
+			aae012,
+			eec117,
+			eec118,
+			eec119
+		)
+		values (
+		    #{logid},
+			#{optype},
+			#{logstime},
+			#{logetime},
+			#{message},
+			#{opstatus},
+			#{opreason},
+			#{aae011},
+			#{aae012},
+			#{eec117},
+			#{eec118},
+			#{eec119}
+		)
+	</insert>
+
+    <!-- 保存错误异常日志 -->
+    <insert id="saveSysErrorLog" parameterType="SErrorLog">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="logid">
+            SELECT sys_guid() from dual
+        </selectKey>
+        insert into S_ERRORLOG(
+	        logid,
+	        logtime,
+	        stackmsg,
+	        message,
+	        exceptiontype,
+	        usergent,
+	        ipaddr,
+	        url,
+	        cookie
+        )
+        values (
+	        #{logid,jdbcType=VARCHAR} ,
+	        sysdate,
+	        #{stackmsg,jdbcType=CLOB} ,
+	        #{message,jdbcType=VARCHAR} ,
+	        #{exceptiontype,jdbcType=VARCHAR} ,
+	        #{usergent,jdbcType=VARCHAR} ,
+	        #{ipaddr,jdbcType=VARCHAR} ,
+	        #{url,jdbcType=VARCHAR} ,
+	        #{cookie,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 保存站内信 -->
+    <insert id="saveSInfo" parameterType="SLog">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="infocode">
+            SELECT sys_guid() from dual
+        </selectKey>
+        insert into s_info(
+	        infocode,
+	        eec001,
+	        ecd001,
+	        userkind,
+	        infotype,
+	        infocontent,
+	        sddate,
+	        readdate,
+	        is_read,
+	        aae100
+        )
+        values (
+	        #{infocode} ,
+	        #{eec001} ,
+	        #{ecd001} ,
+	        #{userkind} ,
+	        #{infotype} ,
+	        #{infocontent} ,
+	        sysdate ,
+	        null ,
+	        #{is_read} ,
+	        #{aae100}
+        )
+    </insert>
+
+    <!-- 保存短信发送日志 -->
+    <insert id="saveSSmsLog" parameterType="SSmsLog">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            SELECT sys_guid() from dual
+        </selectKey>
+        insert into s_smslog(
+	        id,
+	        optype,
+	        send_userid,
+	        receive_userid,
+	        receive_mobile,
+	        sendtime,
+	        content,
+	        success,
+	        failreason,
+	        userlogid
+        )values(
+	        #{id},
+	        #{optype},
+	        #{send_userid},
+	        #{receive_userid},
+	        #{receive_mobile},
+	        sysdate,
+	        #{content},
+	        #{success},
+	        #{failreason},
+	        #{userlogid}
+        )
+    </insert>
+
+    <!-- 保存邮件发送日志 -->
+    <insert id="saveSEmailLog" parameterType="SEmailLog">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            SELECT sys_guid() from dual
+        </selectKey>
+        insert into s_emaillog(
+	        id,
+	        optype,
+	        send_userid,
+	        receive_userid,
+	        receive_email,
+	        sendtime,
+	        title,
+	        content,
+	        success,
+	        failreason,
+	        userlogid
+        )values(
+	        #{id},
+	        #{optype},
+	        #{send_userid},
+	        #{receive_userid},
+	        #{receive_email},
+	        sysdate,
+	        #{title},
+	        #{content},
+	        #{success},
+	        #{failreason},
+	        #{userlogid}
+        )
+    </insert>
+
+
+    <!--任务执行日志-->
+    <insert id="saveJobLog" parameterType="SJobLog">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="joblogid">
+            SELECT sys_guid() from dual
+        </selectKey>
+        insert into s_joblog(joblogid,job_starttime,job_detail,job_type,success,job_send_info,job_endtime)
+        values(#{Joblogid},#{Jobstarttime},#{Jobdetail},#{Jobtype},#{Success},#{Jobsendinfo},#{Jobendtime})
+    </insert>
+</mapper>

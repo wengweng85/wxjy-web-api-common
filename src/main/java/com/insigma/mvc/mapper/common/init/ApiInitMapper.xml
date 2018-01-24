@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.insigma.mvc.dao.common.init.ApiInitMapper">
+
+    <!-- 得到代码类型列表 -->
+    <select id="getInitcodetypeList" resultType="CodeType">
+        SELECT aaa100 code_type
+        FROM v_code_type
+    </select>
+
+
+    <!-- 得到代码类型信息 -->
+    <select id="getCodeTypeInfo" parameterType="String" resultType="CodeType">
+        SELECT
+            code_type,
+            code_root_value
+        FROM code_type
+        WHERE code_type = #{code_type}
+    </select>
+
+    <!--通过v_aa10获取代码列表  -->
+    <select id="getInitCodeValueList" parameterType="String" resultType="CodeValue">
+        SELECT
+            aaa102 code_value,
+            aaa103 code_name,
+            aaa105 par_code_value,
+            aaa106 code_describe
+        FROM v_aa10
+        WHERE aaa100 = #{code_type}
+        ORDER BY aaa102
+    </select>
+
+    <!-- app用于将地区中文转为代码值 -->
+    <select id="getByParentName" parameterType="String" resultType="CodeValue">
+        SELECT
+            code_value,
+            code_name
+        FROM
+            code_value
+        WHERE
+            code_type = 'AAB301' AND
+            code_name = #{code_name}
+    </select>
+
+    <!--根据父类代码获取子类代码列表  -->
+    <select id="getChildrenByParentId" parameterType="String" resultType="CodeValue">
+        SELECT
+            code_value,
+            code_name
+        FROM
+            code_value
+        WHERE
+            code_type = #{code_type} AND
+            sub_code_value = #{code_value}
+        ORDER BY
+            code_value
+    </select>
+
+    <!-- 获取aa01的数据 -->
+    <select id="getAa01List" resultType="Aa01">
+        SELECT
+            aaa001,
+            aaa005
+        FROM
+            aa01
+        WHERE
+            aaa104='1'
+    </select>
+
+</mapper>
