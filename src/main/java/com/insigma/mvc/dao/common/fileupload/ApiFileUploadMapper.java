@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.insigma.mvc.model.SFileRecord;
 import com.insigma.mvc.model.SFileType;
+import com.insigma.mvc.model.SysExcelBatch;
 
 /**
  * liuds
@@ -85,4 +86,44 @@ public interface ApiFileUploadMapper {
      * @return
      */
     int deleteFileByFileUuid(String file_uuid);
+    
+    /**
+	 * 保存excel文件上传记录表
+	 * @param sfilerecord
+	 */
+	public void saveExelBatch(SysExcelBatch sExcelBatch);
+	
+	
+	/**
+	 * 更新文件记录表
+	 * @param sExcelBatch
+	 */
+	public void updateExelBatch(SysExcelBatch sExcelBatch);
+	
+	/**
+	 * 通过id获取批次号
+	 * @param id
+	 * @return
+	 */
+	public SysExcelBatch getExcelBatchById(String id);
+	
+	
+	public SysExcelBatch getExcelBatchByNumber(String number);
+	/**
+	 * 分页查询
+	 * @param sExcelBatch
+	 * @return
+	 */
+	public List<SysExcelBatch> getExcelBatchList(SysExcelBatch sExcelBatch);
+	
+	/**
+	 * 通过批次号删除批次信息
+	 * @param number
+	 * @return
+	 */
+	public int deleteExcelBatchByNumber(String number);
+	
+	
+	
+	public int updateExelBatchErrorFilePath(SysExcelBatch sExcelBatch);
 }

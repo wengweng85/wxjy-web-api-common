@@ -128,5 +128,126 @@
     <delete id="deleteFileByFileUuid" parameterType="String" >
         DELETE FROM s_file_record t WHERE t.file_uuid=#{file_uuid}
     </delete>
+    
+     <!-- 保存excel上传记录状态表 -->
+	<insert id="saveExelBatch"  parameterType="SysExcelBatch">
+	    <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="excel_batch_id"> 
+            SELECT sys_guid() from dual 
+        </selectKey>
+		insert into s_excel_batch(
+			excel_batch_id,
+			excel_batch_number,
+			excel_batch_begin_time,
+			excel_batch_status,
+			excel_batch_file_path,
+			excel_batch_file_name,
+			excel_batch_file_length,
+			excel_batch_excel_type,
+			excel_batch_aae011
+		)
+		values (
+		    #{excel_batch_id},
+			#{excel_batch_number},
+			sysdate,
+			'0',
+			#{excel_batch_file_path},
+			#{excel_batch_file_name},
+			#{excel_batch_file_length},
+			#{excel_batch_excel_type},
+			#{excel_batch_aae011}
+		)
+	</insert>
+	
+	
+    <!-- 更新上传状态 -->
+    <update id="updateExelBatch" parameterType="SysExcelBatch">
+      update s_excel_batch   
+      <set>
+          excel_batch_end_time=sysdate,excel_batch_cost=round((sysdate-excel_batch_begin_time)*24*60*60),
+	      <if test="excel_batch_total_count != null">
+	        excel_batch_total_count = #{excel_batch_total_count,jdbcType=INTEGER},
+	      </if>
+	      <if test="excel_batch_rt_code != null">
+	        excel_batch_rt_code = #{excel_batch_rt_code,jdbcType=VARCHAR},
+	      </if>
+	      <if test="excel_batch_rt_msg != null">
+	        excel_batch_rt_msg = #{excel_batch_rt_msg,jdbcType=VARCHAR},
+	      </if>
+	      <if test="excel_batch_error_count != null">
+	        excel_batch_error_count = #{excel_batch_error_count,jdbcType=INTEGER},
+	      </if>
+	      <if test="excel_batch_status != null">
+	        excel_batch_status = #{excel_batch_status,jdbcType=VARCHAR},
+	      </if>
+	      <if test="excel_batch_data_status != null">
+	        excel_batch_data_status = #{excel_batch_data_status,jdbcType=INTEGER},
+	      </if>
+      </set>
+    where excel_batch_id = #{excel_batch_id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <!-- 更新错误文件生成路径及生成状态 -->
+  <update id="updateExelBatchErrorFilePath" parameterType="SysExcelBatch">
+      update s_excel_batch 
+      <set>
+	      <if test="excel_error_file_path != null">
+	        excel_error_file_path = #{excel_error_file_path,jdbcType=INTEGER},
+	      </if>
+	      <if test="excel_error_file_download != null">
+	        excel_error_file_download = #{excel_error_file_download,jdbcType=VARCHAR},
+	      </if>
+      </set>
+      where  excel_batch_number=#{excel_batch_number} 
+  </update>
+  
+  
+  <!-- 通过编号获取批次号 -->
+  <select id="getExcelBatchById"  parameterType="String" resultType="SysExcelBatch">
+   select 
+    excel_batch_id,
+	excel_batch_number 
+	from s_excel_batch 
+	where excel_batch_id=#{excel_batch_id}		
+  </select>
+  
+  
+  <!--通过批次号获取批次表相关信息 -->
+  <select id="getExcelBatchByNumber"  parameterType="String" resultType="SysExcelBatch">
+   select 
+	    excel_batch_id,
+		excel_batch_number,
+		excel_batch_file_name,
+		excel_error_file_download,
+		excel_error_file_path    
+	from s_excel_batch 
+	where excel_batch_number=#{excel_batch_number}		
+  </select>
+  
+  
+  
+  <!-- 分页查询 -->
+  <select id="getExcelBatchList"  parameterType="SysExcelBatch" resultType="SysExcelBatch">
+   select 
+        excel_batch_id,
+	    excel_batch_number,
+	    to_char(excel_batch_begin_time,'yyyy-MM-dd HH24:mi:ss') excel_batch_begin_time_string,
+	    excel_batch_total_count,
+	    excel_batch_error_count,
+	    excel_batch_cost,
+	    excel_batch_status,
+	    excel_batch_rt_code,
+	    excel_batch_rt_msg,
+	    excel_error_file_download,
+	    excel_batch_data_status,
+	    excel_batch_file_name  
+  from s_excel_batch t  where t.excel_batch_excel_type =#{excel_batch_excel_type} order by excel_batch_number desc    
+  </select>
+  
+  
+  <!-- 通过批次号删除批次信息 -->
+  <delete id="deleteExcelBatchByNumber"  parameterType="String">
+     delete from s_excel_batch t where t.excel_batch_number=#{excel_batch_number}
+  </delete>
 
 </mapper>

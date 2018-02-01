@@ -24,4 +24,6 @@ public interface ApiInitService {
     AjaxReturnMsg<List<CodeValue>> getMulticodeValuebyType(String code_type);
 
     AjaxReturnMsg<List<Aa01>> getAa01List();
+    
+    AjaxReturnMsg<List<CodeValue>> getInitCodeValueListByFilter(CodeType codetype);
 }

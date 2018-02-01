@@ -9,6 +9,7 @@
        a.password,
        a.username cnname,
        a.enabled,
+       a.baseinfoid,
        c.NAME groupname  
      from s_user a ,s_usergroupref b ,s_group c where 
      a.userid=b.userid and b.groupid=c.GROUPID

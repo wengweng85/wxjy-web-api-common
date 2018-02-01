@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -17,24 +18,36 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.github.pagehelper.PageInfo;
+import com.insigma.common.excel.XLSXCovertCSVReader;
 import com.insigma.common.listener.AppConfig;
 import com.insigma.common.util.DateUtil;
 import com.insigma.common.util.FileUtil;
 import com.insigma.common.util.RandomNumUtil;
 import com.insigma.common.util.StringUtil;
 import com.insigma.dto.AjaxReturnMsg;
+import com.insigma.mvc.component.appcontext.MyApplicationContextUtil;
 import com.insigma.mvc.controller.MvcHelper;
 import com.insigma.mvc.dao.common.fileupload.ApiFileUploadMapper;
 import com.insigma.mvc.model.SFileRecord;
 import com.insigma.mvc.model.SFileType;
+import com.insigma.mvc.model.SysExcelBatch;
+import com.insigma.mvc.service.common.excel.ExcelVS;
 import com.insigma.mvc.service.common.fileupload.ApiFileUploadService;
+import com.insigma.resolver.AppException;
 
 /**
  * Created by LENOVO on 2017/8/28.
@@ -48,6 +61,11 @@ public class ApiFileUploadServiceImpl extends MvcHelper implements ApiFileUpload
 
     @Resource
     private ApiFileUploadMapper fileUploadMapper;
+    
+	@Resource(name = "taskExecutor")  
+	private TaskExecutor taskExecutor; 
+    
+    Log log = LogFactory.getLog(ApiFileUploadServiceImpl.class);
 
     @Override
     public SFileRecord uploadFile(MultipartFile multipartFile, String file_bus_type, String file_bus_name,String file_bus_id) throws Exception {
@@ -225,10 +243,9 @@ public class ApiFileUploadServiceImpl extends MvcHelper implements ApiFileUpload
      */
     @Override
     public AjaxReturnMsg<Map<String, Object>> getFileList(SFileRecord sFileRecord) {
-        /*List<SFileRecord> list=fileUploadMapper.getBusFileRecordListByBusId(sFileRecord);
+        List<SFileRecord> list=fileUploadMapper.getBusFileRecordListByBusId(sFileRecord);
         PageInfo<SFileRecord> pageinfo = new PageInfo<SFileRecord>(list);
-        return this.success_hashmap_response(pageinfo);*/
-        return null;
+        return this.success(pageinfo);
     }
 
     /**
@@ -306,5 +323,144 @@ public class ApiFileUploadServiceImpl extends MvcHelper implements ApiFileUpload
         fileUploadMapper.batupdateBusIdByBusUuidArray(map);
         return this.success("更新成功");
     }
+    
+   
+
+	/**
+	 * 
+	 * @param multipartFile
+	 * @param excel_batch_excel_type
+	 * @param excel_bs_class_name
+	 * @param minColumns
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public AjaxReturnMsg uploadExcelFile(MultipartFile multipartFile, String excel_batch_excel_type, String minColumns,String excel_bs_class_name) throws Exception {
+		long MAX_SIZE = 100* 1024 * 1024L;//100M
+    	try {
+	        if (multipartFile.getSize() > MAX_SIZE) {
+	        	return this.error( "文件尺寸超过规定大小:" + MAX_SIZE / 1024 / 1024 + "M");
+	        } else {
+	            // 得到去除路径的文件名
+	            String originalFilename = multipartFile.getOriginalFilename();
+		        return this.success(uploadexcel(originalFilename,excel_batch_excel_type,minColumns,excel_bs_class_name,multipartFile.getInputStream()));
+	        }
+        } catch (Exception e) {
+        	e.printStackTrace();
+			// 处理文件尺寸过大异常
+			return this.error(e.getMessage());
+        }
+	}
+	
+	
+	 /**
+     * excel文件上传
+     * @originalFilename 原始文件名
+     * @excel_batch_excel_type 批处理文件类型
+     *    minColumns 最小宽度
+     *    excel_vs_bean_name 处理类名
+     */
+	public String uploadexcel(String originalFilename,final String excel_batch_excel_type,  String minColumns , String excel_vs_bean_name, InputStream in) throws AppException {
+		// TODO Auto-generated method stub
+	    final SysExcelBatch sexcelbatch = new SysExcelBatch();
+	    File file=null;
+	    try{
+				/** 当前月份 **/
+				String ym = new SimpleDateFormat("yyyyMM").format(new Date());
+				/** 根据真实路径创建目录 **/
+				File fileuploadDir = new File(localdir + "/" + ym);
+				if (!fileuploadDir.exists()) {
+					fileuploadDir.mkdirs();
+				}
+				int indexofdoute = originalFilename.lastIndexOf(".");
+				/**文件名及后缀*/
+				String prefix = originalFilename.substring(0, indexofdoute);
+				String endfix = originalFilename.substring(indexofdoute).toLowerCase();
+				/**新文件名按日期到毫秒*/
+				prefix = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+				String filepath=localdir + "/" + ym + "/"+prefix+endfix;
+				file=new File(filepath);
+				sexcelbatch.setExcel_batch_file_path(filepath);
+				sexcelbatch.setExcel_batch_file_name(originalFilename);
+				OutputStream os = new FileOutputStream(file);
+				int bytesRead = 0;
+				byte [] buffer = new byte[8192];
+				while ((bytesRead = in.read(buffer, 0, 8192)) != -1) {
+					os.write(buffer, 0, bytesRead);
+				}
+				os.flush();
+				os.close();
+				in.close();
+				//批次号为当前时间到毫秒
+				sexcelbatch.setExcel_batch_number(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()));
+				//记录excel相关信息 包括文件大小、业务类型、获取行数、上传状态等
+				sexcelbatch.setExcel_batch_file_length(file.length());
+				sexcelbatch.setExcel_batch_excel_type(excel_batch_excel_type);
+				sexcelbatch.setExcel_batch_aae011("");
+				sexcelbatch.setExcel_batch_status("0");//转换xlsx
+				//保存文件记录
+				fileUploadMapper.saveExelBatch(sexcelbatch);
+				
+				//第一步 将excel转换成cvs格式
+				final List<String[]> list = XLSXCovertCSVReader.readerExcel( filepath, "Sheet1", new Integer(minColumns).intValue());
+				if(list==null){
+					sexcelbatch.setExcel_batch_status("4");//发生异常
+					sexcelbatch.setExcel_batch_rt_msg("所用的excel格式不正确,请确定excel第一列sheet名字为Sheet1");
+					fileUploadMapper.updateExelBatch(sexcelbatch);
+					throw new AppException("所用的excel格式不正确,请确定excel第一列sheet名字为Sheet1");
+				}
+				//行总数
+				sexcelbatch.setExcel_batch_total_count(new Long(list.size()));
+				sexcelbatch.setExcel_batch_data_status(10);//数据导入状态10%
+				sexcelbatch.setExcel_batch_status("1");//导入临时表
+				//更新文件记录
+				fileUploadMapper.updateExelBatch(sexcelbatch);
+				
+			    final ExcelVS excelvs=(ExcelVS) MyApplicationContextUtil.getContext().getBean(excel_vs_bean_name);
+				
+				//开启线程执行
+				taskExecutor.execute(new Runnable() {  
+				    @Override  
+				    public void run() {  
+				        // TODO Auto-generated method stub  
+				        try {  
+				        	//数据处理
+							//if(excel_batch_excel_type.equals("sxpt_excel_imp")){
+								//数据保存到临时表
+								log.info("保存到临时表开始时间"+new Date().toLocaleString());
+								Date start=new Date();
+								//第二步 导入临时表
+								excelvs.executeListToTemp(list, sexcelbatch);
+								Date end=new Date();
+								Long cost=end.getTime()-start.getTime();
+								log.info("保存到临时表开始结束"+new Date().toLocaleString()+"花费"+cost/1000+"s");
+								//第三步 调用过程处理数据
+								excelvs.executeProc(sexcelbatch);
+							//}
+				        } catch (Exception e) {  
+				            // TODO Auto-generated catch block  
+				            e.printStackTrace();  
+				        }  
+				    }  
+				});  
+			}catch(Exception e){
+				e.printStackTrace();
+				sexcelbatch.setExcel_batch_status("4");//发生异常
+				if(e.getMessage().equals(minColumns)){
+					sexcelbatch.setExcel_batch_rt_msg("所用的excel格式不正确,数据列超过要求的"+minColumns+"列,请确认");
+				}else{
+					sexcelbatch.setExcel_batch_rt_msg(e.getMessage());
+				}
+				fileUploadMapper.updateExelBatch(sexcelbatch);
+				throw new AppException(e.getMessage());
+			}finally{
+		         if(file.exists()){
+		        	file.delete();
+		         }
+			}
+		   return JSONObject.fromObject(sexcelbatch).toString();
+
+	}
 
 }

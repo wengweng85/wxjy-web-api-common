@@ -6,7 +6,7 @@
     <groupId>com.insigma</groupId>
     <artifactId>wxjy-web-api-common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>wxjyapi</name>
+    <name>wxjy-web-api-common</name>
     <url>http://maven.apache.org</url>
     <properties>
         <project.build.sourceEncoding>GBK</project.build.sourceEncoding>

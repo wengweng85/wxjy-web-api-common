@@ -53,7 +53,7 @@
             code_value
         WHERE
             code_type = #{code_type} AND
-            sub_code_value = #{code_value}
+            par_code_value = #{code_value}
         ORDER BY
             code_value
     </select>
@@ -69,4 +69,13 @@
             aaa104='1'
     </select>
 
+    <!-- 通过代码类型获取对应代码   -->
+	<select id="getInitCodeValueListByFilter" parameterType="CodeType" resultType="CodeValue" >
+		 select aaa102 code_value ,aaa103 code_name,aaa105 par_code_value,aaa106 code_describe  from v_aa10 where aaa100=#{code_type}
+		  <if test="filter != null">
+	         and ${filter}
+	      </if>
+		 order by aaa102
+	</select>
+	
 </mapper>

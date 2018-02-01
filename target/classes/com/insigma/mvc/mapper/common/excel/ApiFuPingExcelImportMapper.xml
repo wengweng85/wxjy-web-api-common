@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.insigma.mvc.dao.common.excel.ApiFuPingExcelImportMapper">
+	<insert id="insertExcelTempData" parameterType="Ac60ExcelTemp">
+	    <!--  
+	    <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="excel_temp_id"> 
+	         SELECT sys_guid() from dual 
+	    </selectKey>
+	    -->
+		insert into AC60_EXCEL_TEMP(
+	        excel_temp_id	,--	导入临时表之临时表主键
+			excel_batch_number	,--	导入临时表之导入批次号
+			aac003	,--	导入临时表之姓名
+			aac002	,--	导入临时表之身份证号
+			aac010	,--	导入临时表之劳动者户口所在地
+			aac004	,--	导入临时表之性别
+			aac005	,--	导入临时表之民族
+			aac007	,--	导入临时表之年龄
+			aac033	,--	导入临时表之健康状况
+			aac024	,--	导入临时表之政治面貌
+			aac011	,--	导入临时表之学历代码
+			aae006	,--	导入临时表之联系电话
+			aae015	,--	导入临时表之劳动技能
+			aac029	,--	导入临时表之户主姓名
+			aac030	,--	导入临时表之是否在校生
+			aac031	,--	导入临时表之主要致贫原因
+			adc001	,--	导入临时表之就业新式
+			adc002	,--	导入临时表之就业地域
+			adc003	,--	导入临时表之就业地
+			adc004	,--	导入临时表之就业工种
+			adc005	,--	导入临时表之就业时间
+			adc006	,--	导入临时表之是否签订劳动合同或协议
+			adc007	,--	导入临时表之是否参加社会保险
+			adc008	,--	导入临时表之月均工资
+			adc009	,--	导入临时表之岗位类型
+			adc010	,--	导入临时表之公益性岗位安置地址
+			adc011	,--	导入临时表之公益性岗位安置单位名称
+			adc012	,--	导入临时表之安置时间
+			adc013	,--	导入临时表之岗位名称
+			adc014	,--	导入临时表之是否参加就业培训
+			adc015	,--	导入临时表之培训类型
+			adc016	,--	导入临时表之培训开始时间
+			adc017	,--	导入临时表之培训截止时间
+			adc018	,--	导入临时表之培训类别
+			adc019	,--	导入临时表之取得证书
+			adc020	,--	导入临时表之培训补贴（元）
+			adc021	,--	导入临时表之是否就业
+			adc022	,--	导入临时表之创业时间
+			adc023	,--	导入临时表之是否参加创业培训
+			adc024	,--	导入临时表之创业类型
+			adc025	,--	导入临时表之企业或实体地址
+			adc026	,--	导入临时表之企业或实体名称
+			adc027	,--	导入临时表之产业类别
+			adc028	,--	导入临时表之是否享受小额担保贷款
+			adc029	,--	导入临时表之贷款金额（万元）
+			adc030	,--	导入临时表之吸纳劳动力人数
+			adc031	,--	导入临时表之是否在工商部门注册登记
+			adc032	,--	导入临时表之是否有就业愿望
+			adc033	,--	导入临时表之就业意向地
+			adc034	,--	导入临时表之期望月薪（元）
+			adc035	,--	导入临时表之就业服务需求
+			adc036	,--	导入临时表之提供就业政策咨询次数(次)
+			adc037	,--	导入临时表之提供就业信息次数（次）
+			adc038	,--	导入临时表之提供职业指导与介绍次数（次）
+			adc039	,--	导入临时表之提供培训次数（次）
+			adc040	,--	导入临时表之提供创业服务次数(次)
+			adc041	,--	导入临时表之是否享受职业介绍补贴
+			adc042	,--	导入临时表之是否享受社会保险补贴
+			adc043	,--	导入临时表之是否享受岗位补贴
+			adc044	,--	导入临时表之是否享受其他政策扶持
+			excel_isvalid	,--	导入临时表之是否正确数据
+			excel_rownum	,--	导入临时表之行数
+			excel_impdate	,--	导入临时表之导入日期
+			excel_isop	--	导入临时表之是否已经处理
+		)
+		values (
+		    #{excel_temp_id	,jdbcType=VARCHAR},--	导入临时表之临时表主键
+			#{excel_batch_number	,jdbcType=VARCHAR},--	导入临时表之导入批次号
+			#{aac003	,jdbcType=VARCHAR},--	导入临时表之姓名
+			#{aac002	,jdbcType=VARCHAR},--	导入临时表之身份证号
+			#{aac010	,jdbcType=VARCHAR},--	导入临时表之劳动者户口所在地
+			#{aac004	,jdbcType=VARCHAR},--	导入临时表之性别
+			#{aac005	,jdbcType=VARCHAR},--	导入临时表之民族
+			#{aac007	,jdbcType=VARCHAR},--	导入临时表之年龄
+			#{aac033	,jdbcType=VARCHAR},--	导入临时表之健康状况
+			#{aac024	,jdbcType=VARCHAR},--	导入临时表之政治面貌
+			#{aac011	,jdbcType=VARCHAR},--	导入临时表之学历代码
+			#{aae006	,jdbcType=VARCHAR},--	导入临时表之联系电话
+			#{aae015	,jdbcType=VARCHAR},--	导入临时表之劳动技能
+			#{aac029	,jdbcType=VARCHAR},--	导入临时表之户主姓名
+			#{aac030	,jdbcType=VARCHAR},--	导入临时表之是否在校生
+			#{aac031	,jdbcType=VARCHAR},--	导入临时表之主要致贫原因
+			#{adc001	,jdbcType=VARCHAR},--	导入临时表之就业新式
+			#{adc002	,jdbcType=VARCHAR},--	导入临时表之就业地域
+			#{adc003	,jdbcType=VARCHAR},--	导入临时表之就业地
+			#{adc004	,jdbcType=VARCHAR},--	导入临时表之就业工种
+			#{adc005	,jdbcType=VARCHAR},--	导入临时表之就业时间
+			#{adc006	,jdbcType=VARCHAR},--	导入临时表之是否签订劳动合同或协议
+			#{adc007	,jdbcType=VARCHAR},--	导入临时表之是否参加社会保险
+			#{adc008	,jdbcType=VARCHAR},--	导入临时表之月均工资
+			#{adc009	,jdbcType=VARCHAR},--	导入临时表之岗位类型
+			#{adc010	,jdbcType=VARCHAR},--	导入临时表之公益性岗位安置地址
+			#{adc011	,jdbcType=VARCHAR},--	导入临时表之公益性岗位安置单位名称
+			#{adc012	,jdbcType=VARCHAR},--	导入临时表之安置时间
+			#{adc013	,jdbcType=VARCHAR},--	导入临时表之岗位名称
+			#{adc014	,jdbcType=VARCHAR},--	导入临时表之是否参加就业培训
+			#{adc015	,jdbcType=VARCHAR},--	导入临时表之培训类型
+			#{adc016	,jdbcType=VARCHAR},--	导入临时表之培训开始时间
+			#{adc017	,jdbcType=VARCHAR},--	导入临时表之培训截止时间
+			#{adc018	,jdbcType=VARCHAR},--	导入临时表之培训类别
+			#{adc019	,jdbcType=VARCHAR},--	导入临时表之取得证书
+			#{adc020	,jdbcType=VARCHAR},--	导入临时表之培训补贴（元）
+			#{adc021	,jdbcType=VARCHAR},--	导入临时表之是否就业
+			#{adc022	,jdbcType=VARCHAR},--	导入临时表之创业时间
+			#{adc023	,jdbcType=VARCHAR},--	导入临时表之是否参加创业培训
+			#{adc024	,jdbcType=VARCHAR},--	导入临时表之创业类型
+			#{adc025	,jdbcType=VARCHAR},--	导入临时表之企业或实体地址
+			#{adc026	,jdbcType=VARCHAR},--	导入临时表之企业或实体名称
+			#{adc027	,jdbcType=VARCHAR},--	导入临时表之产业类别
+			#{adc028	,jdbcType=VARCHAR},--	导入临时表之是否享受小额担保贷款
+			#{adc029	,jdbcType=VARCHAR},--	导入临时表之贷款金额（万元）
+			#{adc030	,jdbcType=VARCHAR},--	导入临时表之吸纳劳动力人数
+			#{adc031	,jdbcType=VARCHAR},--	导入临时表之是否在工商部门注册登记
+			#{adc032	,jdbcType=VARCHAR},--	导入临时表之是否有就业愿望
+			#{adc033	,jdbcType=VARCHAR},--	导入临时表之就业意向地
+			#{adc034	,jdbcType=VARCHAR},--	导入临时表之期望月薪（元）
+			#{adc035	,jdbcType=VARCHAR},--	导入临时表之就业服务需求
+			#{adc036	,jdbcType=VARCHAR},--	导入临时表之提供就业政策咨询次数(次)
+			#{adc037	,jdbcType=VARCHAR},--	导入临时表之提供就业信息次数（次）
+			#{adc038	,jdbcType=VARCHAR},--	导入临时表之提供职业指导与介绍次数（次）
+			#{adc039	,jdbcType=VARCHAR},--	导入临时表之提供培训次数（次）
+			#{adc040	,jdbcType=VARCHAR},--	导入临时表之提供创业服务次数(次)
+			#{adc041	,jdbcType=VARCHAR},--	导入临时表之是否享受职业介绍补贴
+			#{adc042	,jdbcType=VARCHAR},--	导入临时表之是否享受社会保险补贴
+			#{adc043	,jdbcType=VARCHAR},--	导入临时表之是否享受岗位补贴
+			#{adc044	,jdbcType=VARCHAR},--	导入临时表之是否享受其他政策扶持
+			'1',--	导入临时表之是否正确数据
+			#{excel_rownum	,jdbcType=INTEGER},--	导入临时表之行数
+			sysdate,--	导入临时表之导入日期
+			'0'--	导入临时表之是否已经处理
+		)
+	</insert>
+
+	<!-- 将临时表导入正式表 -->
+	<select  id="executePovertyData" statementType="CALLABLE" parameterType="SysExcelBatch" timeout="3600">
+	    {call pkg_ac60_excel_data_imp.ac60_temp_imp_update(
+	    #{excel_batch_number,mode=IN,jdbcType=INTEGER},
+	    #{excel_batch_rt_code,mode=OUT,jdbcType=VARCHAR},
+	    #{excel_batch_rt_msg,mode=OUT,jdbcType=VARCHAR}
+	    )}
+	</select>
+	
+	
+	<!-- 通用批次号查询导入的数据整理情况  -->
+	<select id="queryPovertyDataTotalByexcelBatchNumber" parameterType="Ac60ExcelTemp" resultType="Ac60ExcelTemp">
+	     select excel_errormsg, excel_errormsg ,count(*) excel_errormsg_groupby_total from ac60_excel_temp t where  excel_batch_number=#{excel_batch_number}  group by t.excel_errormsg,t.excel_batch_number
+	</select>
+	
+	
+	<!-- 通用批次号查询导入的数据 -->
+	<select id="queryPovertyDataByexcelBatchNumber" parameterType="Ac60ExcelTemp" resultType="Ac60ExcelTemp" >
+	    select
+	        aac003	,--	导入临时表之姓名
+			aac002	,--	导入临时表之身份证号
+			aac010	,--	导入临时表之劳动者户口所在地
+			aac004	,--	导入临时表之性别
+			aac005	,--	导入临时表之民族
+			aac007	,--	导入临时表之年龄
+			aac033	,--	导入临时表之健康状况
+			aac024	,--	导入临时表之政治面貌
+			aac011	,--	导入临时表之学历代码
+			aae006	,--	导入临时表之联系电话
+			aae015	,--	导入临时表之劳动技能
+			aac029	,--	导入临时表之户主姓名
+			aac030	,--	导入临时表之是否在校生
+			aac031	,--	导入临时表之主要致贫原因
+	        excel_isvalid	,--	导入临时表之是否正确数据
+	        excel_errormsg  ,--
+			excel_rownum	,--	导入临时表之行数
+			excel_impdate	,--	导入临时表之导入日期
+			excel_isop	--	导入临时表之是否已经处理
+	from AC60_EXCEL_TEMP where excel_batch_number=#{excel_batch_number}  
+    <if test="excel_isvalid!=null">
+       and excel_isvalid=#{excel_isvalid}
+    </if>
+    <if test="excel_errormsg!=null">
+       and excel_errormsg=#{excel_errormsg}
+    </if>
+    <if test="excel_isop!=null">
+       and excel_isop=#{excel_isop}
+    </if>
+    order by excel_rownum 
+	</select>
+	
+	<!-- 通过批次号删除历史导入临时表信息 -->
+	<delete id="deleteTempDataByNumber" parameterType="String"  timeout="500">
+	   delete from AC60_EXCEL_TEMP  t where t.excel_batch_number=#{excel_batch_number}
+	</delete>
+	
+	<!-- 查询临时表中错误数据 -->
+	<select id="queryExportDataByNumber" parameterType="String" resultType="ExcelExportModel"  timeout="500">
+	 select
+      excel_rownum||','||
+      aac003  ||','||
+      ''''||aac002  ||','||
+      aac010  ||','||
+      aac004  ||','||
+      aac005  ||','||
+      aac007  ||','||
+      aac033  ||','||
+      aac024  ||','||
+      aac011  ||','||
+      ''''||aae006  ||','||
+      aae015  ||','||
+      aac029  ||','||
+      aac030  ||','||
+      aac031  ||','||
+      adc001  ||','||
+      adc002  ||','||
+      adc003  ||','||
+      adc004  ||','||
+      adc005  ||','||
+      adc006  ||','||
+      adc007  ||','||
+      adc008  ||','||
+      adc009  ||','||
+      adc010  ||','||
+      adc011  ||','||
+      adc012  ||','||
+      adc013  ||','||
+      adc014  ||','||
+      adc015  ||','||
+      adc016  ||','||
+      adc017  ||','||
+      adc018  ||','||
+      adc019  ||','||
+      adc020  ||','||
+      adc021  ||','||
+      adc022  ||','||
+      adc023  ||','||
+      adc024  ||','||
+      adc025  ||','||
+      adc026  ||','||
+      adc027  ||','||
+      adc028  ||','||
+      adc029  ||','||
+      adc030  ||','||
+      adc031  ||','||
+      adc032  ||','||
+      adc033  ||','||
+      adc034  ||','||
+      adc035  ||','||
+      adc036  ||','||
+      adc037  ||','||
+      adc038  ||','||
+      adc039  ||','||
+      adc040  ||','||
+      adc041  ||','||
+      adc042  ||','||
+      adc043  ||','||
+      adc044  ||','||
+      excel_errormsg  excel_info
+	 from AC60_EXCEL_TEMP t where t.excel_batch_number=#{excel_batch_number}
+	 and t.excel_isvalid='0'
+	</select>
+	
+	
+	<!-- 查询数据  queryImpDataById -->
+	<select id="queryImpDataById" parameterType="String" resultType="Ac60ExcelTemp">
+	  select 
+      aac003  ,-- 导入临时表之姓名
+      aac002  ,-- 导入临时表之身份证号
+      (select aaa103 from v_aa10 t where t.aaa100='AAC010' and aaa102=aab299) aac010  ,-- 导入临时表之劳动者户口所在地
+      (select code_name from code_value t where t.code_type='AAC004' and code_value=aac004) aac004  ,-- 导入临时表之性别
+      (select code_name from code_value t where t.code_type='AAC005' and code_value=aac005) aac005  ,-- 导入临时表之民族
+      aac007  ,-- 导入临时表之年龄
+      (select code_name from code_value t where t.code_type='AAC033' and code_value=aac033) aac033  ,-- 导入临时表之健康状况
+      (select code_name from code_value t where t.code_type='AAC024' and code_value=aac024) aac024  ,-- 导入临时表之政治面貌
+      (select code_name from code_value t where t.code_type='AAC011' and code_value=aac011) aac011  ,-- 导入临时表之学历代码
+      aae006  ,-- 导入临时表之联系电话
+      (select code_name from code_value t where t.code_type='AAE015' and code_value=aae015) aae015  ,-- 导入临时表之劳动技能
+      aac029  ,-- 导入临时表之户主姓名
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=aac030) aac030  ,-- 导入临时表之是否在校生
+      aac031  ,-- 导入临时表之主要致贫原因
+      (select code_name from code_value t where t.code_type='ADC001' and code_value=adc001) adc001  ,-- 导入临时表之就业新式
+      (select code_name from code_value t where t.code_type='ADC002' and code_value=adc002) adc002  ,-- 导入临时表之就业地域
+      (select code_name from code_value t where t.code_type='ADC003' and code_value=adc003) adc003  ,-- 导入临时表之就业地
+      (select code_name from code_value t where t.code_type='ACA111' and code_value=adc004) adc004  ,-- 导入临时表之就业工种
+      to_char(adc005,'yyyy-MM-dd') adc005  ,-- 导入临时表之就业时间
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc006) adc006  ,-- 导入临时表之是否签订劳动合同或协议
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc007) adc007  ,-- 导入临时表之是否参加社会保险
+      adc008  ,-- 导入临时表之月均工资
+      (select code_name from code_value t where t.code_type='ADC009' and code_value=adc009) adc009  ,-- 导入临时表之岗位类型
+      (select code_name from code_value t where t.code_type='AAB301' and code_value=adc010) adc010  ,-- 导入临时表之公益性岗位安置地址
+      adc011  ,-- 导入临时表之公益性岗位安置单位名称
+      to_char(adc012,'yyyy-MM-dd') adc012  ,-- 导入临时表之安置时间
+      adc013  ,-- 导入临时表之岗位名称
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc014) adc014  ,-- 导入临时表之是否参加就业培训
+      (select code_name from code_value t where t.code_type='ADC015' and code_value=adc015) adc015  ,-- 导入临时表之培训类型
+      to_char(adc016,'yyyy-MM-dd') adc016  ,-- 导入临时表之培训开始时间
+      to_char(adc017,'yyyy-MM-dd') adc017  ,-- 导入临时表之培训截止时间
+      (select code_name from code_value t where t.code_type='ADC018' and code_value=adc018) adc018  ,-- 导入临时表之培训类别
+      adc019  ,-- 导入临时表之取得证书
+      adc020  ,-- 导入临时表之培训补贴（元）
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc021) adc021  ,-- 导入临时表之是否就业
+      to_char(adc022,'yyyy-MM-dd') adc022  ,-- 导入临时表之创业时间
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc023) adc023  ,-- 导入临时表之是否参加创业培训
+      (select code_name from code_value t where t.code_type='ADC024' and code_value=adc024) adc024  ,-- 导入临时表之创业类型
+      adc025  ,-- 导入临时表之企业或实体地址
+      adc026  ,-- 导入临时表之企业或实体名称
+      (select code_name from code_value t where t.code_type='ADC027' and code_value=adc027) adc027  ,-- 导入临时表之产业类别
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc028) adc028  ,-- 导入临时表之是否享受小额担保贷款
+      adc029  ,-- 导入临时表之贷款金额（万元）
+      adc030  ,-- 导入临时表之吸纳劳动力人数
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc031) adc031  ,-- 导入临时表之是否在工商部门注册登记
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc032) adc032  ,-- 导入临时表之是否有就业愿望
+      (select code_name from code_value t where t.code_type='ADC033' and code_value=adc033) adc033  ,-- 导入临时表之就业意向地
+      adc034  ,-- 导入临时表之期望月薪（元）
+      (select code_name from code_value t where t.code_type='ADC035' and code_value=adc035) adc035  ,-- 导入临时表之就业服务需求
+      adc036  ,-- 导入临时表之提供就业政策咨询次数(次)
+      adc037  ,-- 导入临时表之提供就业信息次数（次）
+      adc038  ,-- 导入临时表之提供职业指导与介绍次数（次）
+      adc039  ,-- 导入临时表之提供培训次数（次）
+      adc040  ,-- 导入临时表之提供创业服务次数(次)
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc041) adc041  ,-- 导入临时表之是否享受职业介绍补贴
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc042) adc042  ,-- 导入临时表之是否享受社会保险补贴
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc043) adc043  ,-- 导入临时表之是否享受岗位补贴
+      (select code_name from code_value t where t.code_type='YESNO' and code_value=adc044) adc044  --  导入临时表之是否享受其他政策扶持
+     from ac60 a,ac61 b,ac62 c,ac63 d,ac64 e ,ac65 f,ac66 g,ac67 h
+     where a.aac001=b.aac001 
+     and a.aac001=c.aac001
+     and a.aac001=d.aac001
+     and a.aac001=e.aac001
+     and a.aac001=f.aac001
+     and a.aac001=g.aac001
+     and a.aac001=h.aac001
+     and a.aac002=#{aac002}
+	</select>
+</mapper>

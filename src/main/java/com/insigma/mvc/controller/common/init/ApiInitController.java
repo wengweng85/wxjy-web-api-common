@@ -28,7 +28,7 @@ import com.insigma.resolver.AppException;
  *
  */
 @RestController
-@Api(description = "参数控制器")
+@Api(description = "公共接口-参数管理及数据字典管理")
 public class ApiInitController extends MvcHelper {
 
     @Resource
@@ -100,4 +100,17 @@ public class ApiInitController extends MvcHelper {
         return apiinitservice.getMulticodeValuebyType(code_type);
     }
 
+    /**
+     * 根据代码类型获取代码值同时可以通过过滤条件过滤
+     *
+     * @param code_type
+     * @return
+     * @throws AppException
+     */
+    @ApiOperation(value = "根据代码类型获取代码值同时可以通过过滤条件过滤", notes = "根据代码类型获取代码值同时可以通过过滤条件过滤",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/codetype/getInitCodeValueListByFilter", method = RequestMethod.POST)
+    public AjaxReturnMsg<List<CodeValue>> getInitCodeValueListByFilter(CodeType code_type) throws AppException {
+        return apiinitservice.getInitCodeValueListByFilter(code_type);
+    }
 }

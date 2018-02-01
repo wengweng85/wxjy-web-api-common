@@ -25,4 +25,6 @@ public interface ApiInitMapper {
     List<CodeValue> getChildrenByParentId(@Param("code_type") String code_type,  @Param("code_value") String code_value);
 
     List<Aa01> getAa01List();
+    
+    List<CodeValue> getInitCodeValueListByFilter(CodeType codetype);
 }

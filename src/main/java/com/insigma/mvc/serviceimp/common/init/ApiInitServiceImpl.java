@@ -89,4 +89,9 @@ public class ApiInitServiceImpl extends MvcHelper implements ApiInitService {
         Matcher matcher = p.matcher(str);
         return matcher.find();
     }
+    
+    @Override
+	public AjaxReturnMsg<List<CodeValue>> getInitCodeValueListByFilter(CodeType codetype) {
+		return this.success(apiinitMapper.getInitCodeValueListByFilter(codetype));
+	}
 }

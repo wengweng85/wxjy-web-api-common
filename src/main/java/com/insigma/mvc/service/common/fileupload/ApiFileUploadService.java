@@ -12,17 +12,11 @@ import com.insigma.mvc.model.SFileRecord;
  */
 public interface ApiFileUploadService {
 
-    /**
-     * 文件上传
-     *
-     * @param multipartFile 文件流
-     * @param file_bus_type 文件类型
-     * @param file_bus_id   业务编号
-     * @return
-     * @throws Exception
-     */
+
     SFileRecord uploadFile(MultipartFile multipartFile, String file_bus_type, String file_bus_name,String file_bus_id) throws Exception;
 
+    AjaxReturnMsg uploadExcelFile(MultipartFile multipartFile,String excel_upload_type,String minColumns,String excel_bs_class_name) throws Exception;  
+    
     /**
      * 获取文件类型参数
      *
